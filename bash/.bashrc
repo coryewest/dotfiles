@@ -1,29 +1,62 @@
-# Sample .bashrc for SuSE Linux
-# Copyright (c) SuSE GmbH Nuernberg
+# .bashrc
 
-# There are 3 different types of shells in bash: the login shell, normal shell
-# and interactive shell. Login shells read ~/.profile and interactive shells
-# read ~/.bashrc; in our setup, /etc/profile sources ~/.bashrc - thus all
-# settings made here will also take effect in a login shell.
-#
-# NOTE: It is recommended to make language settings in ~/.profile rather than
-# here, since multilingual X sessions would not work properly if LANG is over-
-# ridden in every subshell.
+# Source global definitions
+if [ -f /etc/bashrc ]; then
+    . /etc/bashrc
+fi
 
-# Some applications read the EDITOR variable to determine your favourite text
-# editor. So uncomment the line below and enter the editor of your choice :-)
-#export EDITOR=/usr/bin/vim
-#export EDITOR=/usr/bin/mcedit
+# User specific environment
+if ! [[ "$PATH" =~ "$HOME/.local/bin:$HOME/bin:" ]]; then
+    PATH="$HOME/.local/bin:$HOME/bin:$PATH"
+fi
+export PATH
 
-# For some news readers it makes sense to specify the NEWSSERVER variable here
-#export NEWSSERVER=your.news.server
+# Uncomment the following line if you don't like systemctl's auto-paging feature:
+# export SYSTEMD_PAGER=
 
-# If you want to use a Palm device with Linux, uncomment the two lines below.
-# For some (older) Palm Pilots, you might need to set a lower baud rate
-# e.g. 57600 or 38400; lowest is 9600 (very slow!)
-#
-#export PILOTPORT=/dev/pilot
-#export PILOTRATE=115200
+# User specific aliases and functions
+if [ -d ~/.bashrc.d ]; then
+    for rc in ~/.bashrc.d/*; do
+        if [ -f "$rc" ]; then
+            . "$rc"
+        fi
+    done
+fi
+unset rc
 
-test -s ~/.alias && . ~/.alias || true
 eval "$(starship init bash)"
+
+function cd() {
+    new_directory="$*";
+    if [ $# -eq 0 ]; then
+        new_directory=${HOME};
+    fi;
+    builtin cd "${new_directory}" && /bin/ls -lhF --time-style=long-iso --color=auto --ignore=lost+found
+}
+
+
+
+function extract () {
+    if [ -f $1 ] ; then
+      case $1 in
+        *.tar.bz2)   tar xjvf $1    ;;
+        *.tar.gz)    tar xzvf $1    ;;
+        *.tar.xz)    tar xvf $1    ;;
+        *.bz2)       bzip2 -d $1    ;;
+        *.rar)       unrar2dir $1    ;;
+        *.gz)        gunzip $1    ;;
+        *.tar)       tar xf $1    ;;
+        *.tbz2)      tar xjf $1    ;;
+        *.tgz)       tar xzf $1    ;;
+        *.zip)       unzip2dir $1     ;;
+        *.Z)         uncompress $1    ;;
+        *.7z)        7z x $1    ;;
+        *.ace)       unace x $1    ;;
+        *)           echo "'$1' cannot be extracted via extract()"   ;;
+      esac
+    else
+      echo "'$1' is not a valid file"
+    fi
+}
+
+
