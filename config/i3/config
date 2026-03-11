@@ -1,0 +1,71 @@
+# --- i3 Config: Modern Fedora Edition ---
+
+# Set modifier (Mod4 = Super/Windows key)
+set $mod Mod4
+
+# Set Terminal & Launcher
+set $term alacritty
+set $menu rofi -show drun
+
+# Fonts
+font pango:JetBrains Mono 10
+
+# Gaps (i3-gaps is now integrated into i3)
+gaps inner 10
+gaps outer 5
+smart_gaps on
+smart_borders on
+
+# Keybindings: Basics
+bindsym $mod+Return exec $term
+bindsym $mod+d exec $menu
+bindsym $mod+Shift+q kill
+bindsym $mod+Shift+r restart
+bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'Exit i3?' -B 'Yes' 'i3-msg exit'"
+
+# Movement: Vim-style
+bindsym $mod+h focus left
+bindsym $mod+j focus down
+bindsym $mod+k focus up
+bindsym $mod+l focus right
+
+# Move Windows
+bindsym $mod+Shift+h move left
+bindsym $mod+Shift+j move down
+bindsym $mod+Shift+k move up
+bindsym $mod+Shift+l move right
+
+# Layout Styles
+bindsym $mod+f fullscreen toggle
+bindsym $mod+s layout stacking
+bindsym $mod+w layout tabbed
+bindsym $mod+e layout toggle split
+bindsym $mod+Shift+space floating toggle
+
+# Multimedia Keys (Volume/Brightness)
+bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +5%
+bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -5%
+bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle
+bindsym XF86MonBrightnessUp exec --no-startup-id light -A 5
+bindsym XF86MonBrightnessDown exec --no-startup-id light -S 5
+
+# --- Autostart Applications ---
+exec_always --no-startup-id picom -f              # Compositor for shadows/fading
+exec_always --no-startup-id feh --bg-fill /path/to/your/wallpaper.jpg
+exec_always --no-startup-id nm-applet             # Network management
+exec_always --no-startup-id dex --autostart --environment i3
+
+# --- Bar Configuration ---
+bar {
+    status_command i3status
+    position top
+    colors {
+        background #282a36
+        statusline #f8f8f2
+        separator  #44475a
+        # focused_workspace  border   backgr.  text
+        focused_workspace  #6272a4 #6272a4 #f8f8f2
+        active_workspace   #44475a #44475a #f8f8f2
+        inactive_workspace #282a36 #282a36 #bfbfbf
+    }
+}
